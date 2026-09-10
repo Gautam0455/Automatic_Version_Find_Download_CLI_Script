@@ -15,6 +15,14 @@ from requests.exceptions import ConnectionError, HTTPError, Timeout, ReadTimeout
 from bs4 import BeautifulSoup
 from packaging.version import Version, InvalidVersion
 
+if os.name == "nt":
+    try:
+        import msvcrt
+    except ImportError:
+        msvcrt = None
+else:
+    msvcrt = None
+
 GITHUB_API_RELEASE = "https://api.github.com/repos/{repo}/releases/latest"
 GITHUB_API_TAGS = "https://api.github.com/repos/{repo}/tags"
 NPM_REGISTRY_API = "https://registry.npmjs.org/{package}"
@@ -699,6 +707,16 @@ def expand_dynamic_apps(apps):
                     "discovered_url": line["url"],
                 })
             continue
+        versions = parse_version_list(app.get("current_version"))
+        if (app.get("source") or "").lower() == "manual" and len(versions) > 1:
+            for ver in versions:
+                major = _installed_major(ver)
+                row = copy.deepcopy(app)
+                row["id"] = f"{app['id']}-{major}" if major else f"{app['id']}-{ver}"
+                row["name"] = f"{app.get('name', '')} {major}" if major else app.get("name", "")
+                row["current_version"] = ver
+                expanded.append(row)
+            continue
         expanded.append(copy.deepcopy(app))
     for app in expanded:
         if "_config_old_version" not in app:
@@ -844,7 +862,21 @@ def _official_lookup(key):
         return None, "https://nodejs.org/en/download", "Node.js lookup failed"
 
     if key == "nuget":
-        return "latest", "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", None
+        try:
+            r = requests.get(
+                "https://api.nuget.org/v3-flatcontainer/nuget.commandline/index.json",
+                headers=HEADERS,
+                timeout=12,
+            )
+            if r.status_code == 200:
+                vers = r.json().get("versions") or []
+                clean = [v for v in vers if re.match(r"^\d+\.\d+\.\d+$", v)]
+                if clean:
+                    ver = sorted(clean, key=lambda v: tuple(int(x) for x in v.split(".")))[-1]
+                    return ver, f"https://dist.nuget.org/win-x86-commandline/v{ver}/nuget.exe", None
+        except Exception:
+            pass
+        return None, "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", "NuGet version lookup failed"
 
     if key == "openssh":
         r = requests.get("https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/", headers=WEB_HEADERS, timeout=12)
@@ -855,10 +887,36 @@ def _official_lookup(key):
         return None, "https://www.openssh.com/portable.html", "OpenSSH parse failed"
 
     if key == "pinginfoview":
-        return "latest", "https://www.nirsoft.net/utils/pinginfoview.zip", None
+        dl = "https://www.nirsoft.net/utils/pinginfoview.zip"
+        r = requests.get("https://www.nirsoft.net/utils/index.html", headers=WEB_HEADERS, timeout=12)
+        if r.status_code == 200:
+            m = re.search(r"PingInfoView v(\d+\.\d+)", r.text or "", re.I)
+            if m:
+                return m.group(1), dl, None
+        return None, dl, "PingInfoView version parse failed"
 
     if key == "postman":
-        return "latest", "https://dl.pstmn.io/download/latest/win64", None
+        r = requests.get(
+            "https://dl.pstmn.io/changelog?channel=stable&platform=win64",
+            headers=HEADERS,
+            timeout=12,
+        )
+        if r.status_code == 200:
+            try:
+                changelog = r.json().get("changelog") or []
+                if changelog:
+                    entry = changelog[0]
+                    ver = clean_version_str(entry.get("name"))
+                    dl = None
+                    for asset in entry.get("assets") or []:
+                        if asset.get("url"):
+                            dl = asset["url"]
+                            break
+                    if ver:
+                        return ver, dl or f"https://dl.pstmn.io/download/version/{ver}/windows64", None
+            except Exception:
+                pass
+        return None, "https://dl.pstmn.io/download/latest/win64", "Postman version lookup failed"
 
     if key == "putty":
         r = requests.get("https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html", headers=WEB_HEADERS, timeout=12)
@@ -925,7 +983,16 @@ def _official_lookup(key):
         return None, "https://www.wireshark.org/download.html", "Wireshark parse failed"
 
     if key == "zoom":
-        return "latest", "https://zoom.us/client/latest/ZoomInstallerFull.exe", None
+        dl = "https://zoom.us/client/latest/ZoomInstallerFull.exe"
+        try:
+            r = requests.head(dl, headers=WEB_HEADERS, allow_redirects=True, timeout=12)
+            final = r.url or dl
+            m = re.search(r"/prod/([\d.]+)/", final)
+            if m:
+                return m.group(1), final, None
+        except Exception:
+            pass
+        return None, dl, "Zoom version lookup failed"
 
     if key == "golang":
         r = requests.get("https://go.dev/dl/?mode=json", headers=HEADERS, timeout=12)
@@ -941,23 +1008,57 @@ def _official_lookup(key):
 
     if key == "android-studio":
         r = requests.get("https://developer.android.com/studio", headers=WEB_HEADERS, timeout=15)
-        m = re.search(r"android-studio-(\d+\.\d+\.\d+\.\d+)-windows\.exe", r.text or "")
+        text = r.text or ""
+        m = re.search(
+            r"/studio/install/(\d+\.\d+\.\d+\.\d+)/(android-studio-[^\s\"'<>]+windows\.exe)",
+            text,
+        )
+        if not m:
+            m = re.search(r"android-studio-(\d+\.\d+\.\d+\.\d+)-windows\.exe", text)
+            if m:
+                ver = m.group(1)
+                return ver, (
+                    f"https://dl.google.com/dl/android/studio/install/{ver}/"
+                    f"android-studio-{ver}-windows.exe"
+                ), None
         if m:
-            ver = m.group(1)
-            return ver, (
-                f"https://redirector.gstatic.com/edgedl/android/studio/install/{ver}/"
-                f"android-studio-{ver}-windows.exe"
-            ), None
+            ver, fname = m.group(1), m.group(2)
+            return ver, f"https://dl.google.com/dl/android/studio/install/{ver}/{fname}", None
         return None, "https://developer.android.com/studio", "Android Studio parse failed"
 
+    if key == "pdfcreator":
+        dl = "https://download.pdfforge.org/download/pdfcreator/PDFCreator-stable"
+        r = requests.get("https://download.pdfforge.org/download", headers=WEB_HEADERS, timeout=12)
+        if r.status_code == 200:
+            m = re.search(r"Stable Release (\d+\.\d+\.\d+)", r.text or "", re.I)
+            if m:
+                return m.group(1), dl, None
+        return None, dl, "PDFCreator version parse failed"
+
     if key == "eclipse":
-        r = requests.get("https://download.eclipse.org/eclipse/downloads/", headers=WEB_HEADERS, timeout=15)
-        m = re.search(r"R-(\d+\.\d+)-(\d+)/", r.text or "")
-        if m:
-            ver, stamp = m.group(1), m.group(2)
+        r = requests.get(
+            "https://download.eclipse.org/justj/?file=eclipse/downloads/drops4",
+            headers=WEB_HEADERS,
+            timeout=15,
+        )
+        found = re.findall(r"R-(\d+\.\d+)-(\d+)", r.text or "")
+        best = None
+        for ver, stamp in found:
+            parsed = parse_version(ver)
+            if not parsed:
+                continue
+            if best is None or parsed > best[0]:
+                best = (parsed, ver, stamp)
+        if not best:
+            r2 = requests.get("https://download.eclipse.org/eclipse/downloads/", headers=WEB_HEADERS, timeout=15)
+            m = re.search(r"drops4/R-(\d+\.\d+)-(\d+)/", r2.text or "")
+            if m:
+                best = (parse_version(m.group(1)), m.group(1), m.group(2))
+        if best:
+            _, ver, stamp = best
             return ver, (
                 f"https://download.eclipse.org/eclipse/downloads/drops4/R-{ver}-{stamp}/"
-                f"eclipse-SDK-{ver}-win32-x86_64.zip"
+                f"eclipse-SDK-{ver}-win32-win32-x86_64.zip"
             ), None
         return None, "https://www.eclipse.org/downloads/", "Eclipse parse failed"
 
@@ -1140,11 +1241,33 @@ def _src_oracle(_app):
     return latest_oracle_xe()
 
 
+def _manual_version_lookup(app):
+    """Try to find the actual latest version online for known manual components."""
+    name = (app.get("name") or "").lower()
+    app_id = (app.get("id") or "").lower()
+    cur = app.get("current_version") or ""
+    major = _installed_major(cur)
+
+    if ("red hat" in name or "redhat" in app_id) and "java" in name.lower() + app_id:
+        if major:
+            ver, _, err = latest_official(f"temurin{major}")
+            if ver and not err:
+                return ver
+    if "dotnet" in app_id and "framework" in name:
+        ver, _, err = latest_microsoft_dotnet()
+        if ver and not err:
+            return ver
+    return None
+
+
 def _src_manual(app):
     url = app.get("download_url") or app.get("manual_url")
-    ver = app.get("current_version") or app.get("_config_old_version") or "see vendor page"
     if not url:
         return None, None, "Manual download URL missing."
+    latest = _manual_version_lookup(app)
+    if latest:
+        return latest, url, None
+    ver = app.get("current_version") or app.get("_config_old_version") or "see vendor page"
     return ver, url, None
 
 
@@ -1217,8 +1340,8 @@ def check_app_version(app_config):
     if error_msg:
         status = "ERROR"
     elif source == "manual":
-        status = "OUTDATED"
-        skip_reason = "no public file; open download_url in a browser"
+        status = "Need To Download Manually"
+        skip_reason = "manual download only; open download_url in a browser"
     elif latest_ver:
         status = version_update_status(old_ver, latest_ver)
         if status not in {"UP_TO_DATE", "OUTDATED", "ERROR"}:
@@ -1306,6 +1429,8 @@ def result_ok_for_config(rec):
     """Do not write config.json from ERROR / manual / missing lookups."""
     if not rec:
         return False
+    if rec.get("status") == STATUS_SKIP:
+        return False
     if rec.get("status") == "ERROR" or rec.get("error"):
         return False
     if rec.get("source") == "manual":
@@ -1351,6 +1476,8 @@ def update_config_versions(config, results):
     by_id = {r.get("id"): r for r in results}
     changes = []
     for app in config.get("apps", []):
+        if (app.get("source") or "").lower() == "manual":
+            continue
         current = app.get("current_version", "")
         latest = latest_for_config_app(app, by_id)
         if latest is None or versions_equal(current, latest):
@@ -1384,6 +1511,30 @@ def pause_if_frozen():
         input("\nPress Enter to close...")
     except Exception:
         time.sleep(20)
+
+
+def ctrl_q_requested():
+    """On Windows console, Ctrl+Q requests immediate script exit."""
+    if msvcrt is None:
+        return False
+    try:
+        while msvcrt.kbhit():
+            if msvcrt.getwch() == "\x11":
+                return True
+    except Exception:
+        return False
+    return False
+
+
+def raise_if_ctrl_q():
+    if ctrl_q_requested():
+        raise SystemExit("Exit requested (Ctrl+Q).")
+
+
+def skip_current_component():
+    print()
+    print("Skipped current component (Ctrl+C). Moving to next component...")
+    print()
 
 
 def resolve_folder(folder_name, default_name="downloads"):
@@ -1517,6 +1668,7 @@ def download_file(url, destination_folder):
                 started = time.time()
                 with open(save_path, "wb") as f:
                     for chunk in r.iter_content(chunk_size=64 * 1024):
+                        raise_if_ctrl_q()
                         if not chunk:
                             continue
                         f.write(chunk)
@@ -1554,11 +1706,11 @@ def download_file(url, destination_folder):
                 }
             except KeyboardInterrupt:
                 print()
-                if save_path and os.path.exists(save_path):
-                    try:
+                try:
+                    if save_path and os.path.exists(save_path):
                         os.remove(save_path)
-                    except OSError:
-                        pass
+                except OSError:
+                    pass
                 return False, "Download skipped (Ctrl+C)"
             except (Timeout, ReadTimeout, ConnectionError) as e:
                 last_error = format_lookup_error(e, "Download stalled or timed out")
@@ -1639,12 +1791,12 @@ def build_remark(result):
         return NOT_AVAILABLE_SOURCE
     if status == "ERROR" or err:
         return f"Error: {err or 'lookup failed'}"
+    if source == "manual":
+        return ""
     if versions_match(result.get("old_version"), result.get("latest_version")) or status == "UP_TO_DATE":
         return "Up to date version"
     if result.get("downloaded_file"):
         return "Latest version downloaded to downloads folder"
-    if source == "manual":
-        return "Not downloaded: no public file; open download_url in a browser"
     if skip:
         return f"Not downloaded: {skip}"
     if status == "OUTDATED":
@@ -1652,21 +1804,125 @@ def build_remark(result):
     return "Not downloaded"
 
 
+STATUS_UP_TO_DATE = "UP_TO_DATE"
+STATUS_OUTDATED = "OUTDATED"
+STATUS_ERROR = "ERROR"
+STATUS_MANUAL = "Need To Download Manually"
+STATUS_SKIP = "Skip"
+ALLOWED_STATUSES = {STATUS_UP_TO_DATE, STATUS_OUTDATED, STATUS_ERROR, STATUS_MANUAL, STATUS_SKIP}
+
+
+def make_skip_result(app):
+    """Report row when the user skips a component (Ctrl+C)."""
+    name = app.get("name", "Unknown App")
+    current_ver = app.get("current_version", "")
+    old_ver = app.get("_config_old_version")
+    if old_ver is None:
+        old_ver = current_ver
+    current_id = current_ver if isinstance(current_ver, str) else ",".join(parse_version_list(current_ver))
+    app_id = app.get("id") or f"{name.lower().replace(' ', '-')}-{str(current_id).replace('.', '')}"
+    return {
+        "id": app_id,
+        "name": name,
+        "old_version": old_ver,
+        "current_version": old_ver,
+        "latest_version": "",
+        "status": STATUS_SKIP,
+        "download_url": "",
+        "source": "",
+        "remark": "",
+        "skip_reason": "skipped by user (Ctrl+C)",
+        "error": "",
+        "checked_at": datetime.now().strftime("%d-%m-%Y %H:%M"),
+    }
+
+
+def apply_skip_to_result(result):
+    """Normalize a result row to Skip status for CSV/JSON (matches report layout)."""
+    result["status"] = STATUS_SKIP
+    result["latest_version"] = ""
+    result["download_url"] = ""
+    result["source"] = ""
+    result["remark"] = ""
+    result["error"] = ""
+    result["skip_reason"] = "skipped by user (Ctrl+C)"
+    result["checked_at"] = datetime.now().strftime("%d-%m-%Y %H:%M")
+    return result
+
+
+def record_skipped_component(app, all_results):
+    """Add or update the report row for a user-skipped component."""
+    app_id = app.get("id")
+    if all_results and all_results[-1].get("id") == app_id:
+        apply_skip_to_result(all_results[-1])
+    else:
+        all_results.append(make_skip_result(app))
+    return all_results
+
+
+def apply_report_status(result):
+    """Keep CSV/JSON and console summary on the same status values."""
+    if result.get("status") == STATUS_SKIP:
+        result["latest_version"] = ""
+        result["download_url"] = ""
+        result["source"] = ""
+        result["remark"] = ""
+        return result
+
+    if result.get("old_version") in (None, ""):
+        result["old_version"] = result.get("current_version") or ""
+    result["latest_version"] = result.get("latest_version") or "N/A"
+
+    if result.get("source") == "manual":
+        result["status"] = STATUS_MANUAL
+        result["remark"] = ""
+        return result
+
+    err = (result.get("error") or "").strip()
+    if result.get("status") == STATUS_ERROR or err:
+        result["status"] = STATUS_ERROR
+        result["remark"] = build_remark(result)
+        return result
+
+    if versions_match(result.get("old_version"), result.get("latest_version")):
+        result["status"] = STATUS_UP_TO_DATE
+        result["remark"] = "Up to date version"
+        return result
+
+    if result.get("status") not in ALLOWED_STATUSES:
+        result["status"] = STATUS_OUTDATED
+    result["remark"] = build_remark(result)
+    return result
+
+
+def print_status_summary(results):
+    """Print every required status so counts add up to Components."""
+    counts = {status: 0 for status in ALLOWED_STATUSES}
+    other_n = 0
+    for r in results:
+        status = r.get("status")
+        if status in counts:
+            counts[status] += 1
+        else:
+            other_n += 1
+    print("=" * 60)
+    print(f"{COMPANY_NAME}")
+    print(f"  Components                 : {len(results)}")
+    print(f"  {STATUS_UP_TO_DATE:<27} : {counts[STATUS_UP_TO_DATE]}")
+    print(f"  {STATUS_OUTDATED:<27} : {counts[STATUS_OUTDATED]}")
+    print(f"  {STATUS_MANUAL:<27} : {counts[STATUS_MANUAL]}")
+    print(f"  {STATUS_ERROR:<27} : {counts[STATUS_ERROR]}")
+    print(f"  {STATUS_SKIP:<27} : {counts[STATUS_SKIP]}")
+    if other_n:
+        print(f"  Other                      : {other_n}")
+
+
 def write_reports(results, csv_path, json_path):
     """Rewrite live CSV/JSON reports after every component (survives Ctrl+C)."""
     rows = []
     for r in results:
+        apply_report_status(r)
         row = {k: r.get(k, "") for k in REPORT_FIELDS}
-        if row.get("old_version") in (None, ""):
-            row["old_version"] = r.get("old_version") or r.get("current_version") or ""
-        row["latest_version"] = r.get("latest_version") or "N/A"
-        if versions_match(row.get("old_version"), row.get("latest_version")):
-            row["status"] = "UP_TO_DATE"
-            row["remark"] = "Up to date version"
-        else:
-            row["remark"] = build_remark(r)
-        if row.get("status") not in {"UP_TO_DATE", "OUTDATED", "ERROR"}:
-            row["status"] = "ERROR" if r.get("error") else "OUTDATED"
         rows.append(row)
     with open(csv_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=REPORT_FIELDS)
@@ -1722,81 +1978,96 @@ if __name__ == "__main__":
         print()
         apps = expand_dynamic_apps(config.get("apps", []))
         print(f"Apps      : {len(apps)}")
+        print("Controls  : CTRL+C skip, CTRL+Q Exit")
         print()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         csv_report = os.path.join(reports_dir, f"version_report_{timestamp}.csv")
         json_report = os.path.join(reports_dir, f"version_report_{timestamp}.json")
 
-        for app in apps:
-            print("=" * 60)
-            print(app["name"])
-            print()
+        total_apps = len(apps)
+        for i, app in enumerate(apps, start=1):
+            try:
+                raise_if_ctrl_q()
+                print("=" * 60)
+                print(f"{app['name']} ({i}/{total_apps})")
+                print()
 
-            res = check_app_version(app)
-            all_results.append(res)
-            write_reports(all_results, csv_report, json_report)
+                res = check_app_version(app)
+                all_results.append(res)
+                write_reports(all_results, csv_report, json_report)
 
-            if res.get("error") == NOT_AVAILABLE_SOURCE:
-                print("Status    : ERROR")
-                print()
-                print(f"Error     : {NOT_AVAILABLE_SOURCE}")
-                print()
-                continue
-            elif res.get("source") == "manual":
-                print(f"Old Version : {res['old_version'] or '(not tracked)'}")
-                print()
-                print("Status    : OUTDATED")
-                print()
-                print("Open this link in a browser to download (no auto-download):")
-                print(f"Link      : {res['download_url']}")
-                print()
-            elif res["latest_version"] == "N/A" and res["error"]:
-                print(f"Old Version : {res['old_version']}")
-                print(f"Latest Version : N/A")
-                print()
-                print(f"Status    : ERROR")
-                print()
-                print(f"Error     : {res['error']}")
-                print()
-            else:
-                print(f"Old Version : {res['old_version']}")
-                print(f"Latest Version : {res['latest_version']}")
-                print()
-                print(f"Status    : {res['status']}")
-                print()
-                if res["download_url"] and res["download_url"] != "#":
-                    print(f"Download  : {res['download_url']}")
+                if res.get("error") == NOT_AVAILABLE_SOURCE:
+                    print("Status    : ERROR")
                     print()
-
-                should_download = res["status"] == "OUTDATED" and res.get("source") != "manual"
-                if should_download:
-                    download_url = res.get("download_url") or ""
-                    if is_webpage_download(download_url):
-                        res["skip_reason"] = "vendor webpage only; no direct file. Open download_url in a browser"
-                        res["remark"] = build_remark(res)
-                        print("Auto-download skipped (webpage only). Open this link in a browser:")
-                        print(f"Link      : {download_url}")
+                    print(f"Error     : {NOT_AVAILABLE_SOURCE}")
+                    print()
+                    continue
+                elif res.get("source") == "manual":
+                    print(f"Old Version : {res['old_version'] or '(not tracked)'}")
+                    print(f"Latest Version : {res['latest_version']}")
+                    print()
+                    print("Status    : Need To Download Manually")
+                    print()
+                    print("Open this link in a browser to download (no auto-download):")
+                    print(f"Link      : {res['download_url']}")
+                    print()
+                elif res["latest_version"] == "N/A" and res["error"]:
+                    print(f"Old Version : {res['old_version']}")
+                    print(f"Latest Version : N/A")
+                    print()
+                    print(f"Status    : ERROR")
+                    print()
+                    print(f"Error     : {res['error']}")
+                    print()
+                else:
+                    print(f"Old Version : {res['old_version']}")
+                    print(f"Latest Version : {res['latest_version']}")
+                    print()
+                    print(f"Status    : {res['status']}")
+                    print()
+                    if res["download_url"] and res["download_url"] != "#":
+                        print(f"Download  : {res['download_url']}")
                         print()
-                    else:
-                        print(f"Downloading outdated package to '{download_folder_name}/' ...")
-                        ok, dl_result = download_file(download_url, downloads_dir)
-                        if ok:
-                            print(f"Saved     : {dl_result['file_path']}")
-                            print(f"Size      : {dl_result['size_kb']} KB")
-                            res["downloaded_file"] = dl_result["file_path"]
+
+                    should_download = res["status"] in ("OUTDATED", "UP_TO_DATE") and res.get("source") != "manual"
+                    if should_download:
+                        download_url = res.get("download_url") or ""
+                        if is_webpage_download(download_url):
+                            res["skip_reason"] = "vendor webpage only; no direct file. Open download_url in a browser"
                             res["remark"] = build_remark(res)
+                            print("Auto-download skipped (webpage only). Open this link in a browser:")
+                            print(f"Link      : {download_url}")
+                            print()
                         else:
-                            print(f"Download failed: {dl_result}")
-                            res["error"] = str(dl_result)
-                            res["status"] = "ERROR"
-                            res["remark"] = build_remark(res)
-                            write_reports(all_results, csv_report, json_report)
-                            if "Ctrl+C" in str(dl_result):
-                                raise KeyboardInterrupt
-                            print("Continuing with the next component...")
-                        print()
+                            print(f"Downloading outdated package to '{download_folder_name}/' ...")
+                            raise_if_ctrl_q()
+                            ok, dl_result = download_file(download_url, downloads_dir)
+                            if ok:
+                                print(f"Saved     : {dl_result['file_path']}")
+                                print(f"Size      : {dl_result['size_kb']} KB")
+                                res["downloaded_file"] = dl_result["file_path"]
+                                res["remark"] = build_remark(res)
+                            else:
+                                if "Ctrl+C" in str(dl_result):
+                                    print("Download skipped by user (Ctrl+C). Moving to next component...")
+                                    apply_skip_to_result(res)
+                                    write_reports(all_results, csv_report, json_report)
+                                    print()
+                                    continue
+                                print(f"Download failed: {dl_result}")
+                                res["error"] = str(dl_result)
+                                res["status"] = "ERROR"
+                                res["remark"] = build_remark(res)
+                                write_reports(all_results, csv_report, json_report)
+                                print("Continuing with the next component...")
+                            print()
 
-            write_reports(all_results, csv_report, json_report)
+                write_reports(all_results, csv_report, json_report)
+            except KeyboardInterrupt:
+                skip_current_component()
+                record_skipped_component(app, all_results)
+                write_reports(all_results, csv_report, json_report)
+                continue
 
         write_reports(all_results, csv_report, json_report)
         saved = persist_found_versions(config_path, config, all_results)
@@ -1805,22 +2076,14 @@ if __name__ == "__main__":
             print(f"config.json updated after report: {len(saved)} version(s)")
             print()
 
-        up_to_date_n = sum(1 for r in all_results if r.get("status") == "UP_TO_DATE")
-        outdated_n = sum(1 for r in all_results if r.get("status") == "OUTDATED")
-        error_n = sum(1 for r in all_results if r.get("status") == "ERROR")
-        print("=" * 60)
-        print(f"{COMPANY_NAME}")
-        print(f"  Components : {len(all_results)}")
-        print(f"  Up to date : {up_to_date_n}")
-        print(f"  Outdated   : {outdated_n}")
-        print(f"  Error      : {error_n}")
+        print_status_summary(all_results)
         print()
         print("Reports created next to this program:")
         print(f" - CSV : {rel_to_project(csv_report)}")
         print(f" - JSON: {rel_to_project(json_report)}")
     except KeyboardInterrupt:
         print()
-        print("Stopped by user (Ctrl+C).")
+        print("Saving progress before exit (Ctrl+C). Use CTRL+Q to exit the script.")
         if csv_report and json_report and all_results:
             write_reports(all_results, csv_report, json_report)
             print(f"Report saved: {rel_to_project(csv_report)}")
@@ -1829,7 +2092,16 @@ if __name__ == "__main__":
             print(f"config.json updated after report ({len(saved)} version(s)).")
         elif all_results:
             print("config.json already has the versions found before cancel.")
-    except SystemExit:
+    except SystemExit as e:
+        print()
+        if str(e):
+            print(str(e))
+        if csv_report and json_report and all_results:
+            write_reports(all_results, csv_report, json_report)
+            print(f"Report saved: {rel_to_project(csv_report)}")
+        saved = persist_found_versions(config_path, config, all_results, quiet=True)
+        if saved:
+            print(f"config.json updated after report ({len(saved)} version(s)).")
         raise
     except Exception:
         print()

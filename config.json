@@ -3,42 +3,34 @@
   "reports_folder": "reports",
   "apps": [
     {
-      "id": "log4j-api-1",
-      "name": "log4j-api",
-      "current_version": "2.26.1",
-      "source": "maven",
-      "maven_path": "org/apache/logging/log4j/log4j-api"
-    },
-    {
-      "id": "log4j-core-1",
-      "name": "log4j-core",
-      "current_version": "2.25.4",
-      "source": "maven",
-      "maven_path": "org/apache/logging/log4j/log4j-core"
-    },
-    {
-      "id": "log4j-slf4j2-impl-1",
-      "name": "log4j-slf4j2-impl",
-      "current_version": "2.25.4",
-      "source": "maven",
-      "maven_path": "org/apache/logging/log4j/log4j-slf4j2-impl"
-    },
-    {
-      "id": "log4j-1-2-api-1",
-      "name": "log4j-1.2-api",
-      "current_version": "2.25.4",
-      "source": "maven",
-      "maven_path": "org/apache/logging/log4j/log4j-1.2-api"
-    },
-    {
-      "id": "java",
-      "name": "Java",
+      "id": "redhat-java",
+      "name": "Red Hat Java",
       "current_version": [
-        "8.0.0",
-        "11.0.0",
-        "17.0.0",
-        "21.0.0",
-        "25.0.0"
+        "6.0.0",
+        "9.0.0",
+        "15.0.0",
+        "19.0.0",
+        "23.0.0"
+      ],
+      "source": "manual",
+      "download_url": "https://developers.redhat.com/products/openjdk/download"
+    },
+    {
+      "id": "pinginfoview-222",
+      "name": "PingInfoView",
+      "current_version": "2.20",
+      "source": "official",
+      "official_key": "pinginfoview"
+    },
+    {
+      "id": "oracle-java",
+      "name": "Oracle Java",
+      "current_version": [
+        "8.0.502",
+        "11.0.30.1+1",
+        "17.0.18.1+1",
+        "21.0.10.1+1-LTS",
+        "25.0.2.1+1-LTS"
       ],
       "source": "java"
     },
@@ -46,57 +38,57 @@
       "id": "tomcat",
       "name": "Apache Tomcat",
       "current_version": [
-        "9.0.0",
-        "10.0.0",
-        "11.0.0"
+        "9.0.119",
+        "10.0.58",
+        "11.0.23"
       ],
       "source": "tomcat"
     },
     {
       "id": "jquery-ui-1103",
       "name": "jQuery UI",
-      "current_version": "1.10.3",
+      "current_version": "1.12.2",
       "source": "jqueryui"
     },
     {
       "id": "moment-290",
       "name": "Moment",
-      "current_version": "2.9.0",
+      "current_version": "2.28.1",
       "source": "github",
       "repo": "moment/moment"
     },
     {
       "id": "jquery-mobile-131",
       "name": "jQuery Mobile",
-      "current_version": "1.3.1",
+      "current_version": "1.3.0",
       "source": "github",
       "repo": "jquery-archive/jquery-mobile"
     },
     {
       "id": "vue-2716",
       "name": "Vue",
-      "current_version": "2.0.0",
+      "current_version": "2.5.16",
       "source": "github",
       "repo": "vuejs/vue"
     },
     {
       "id": "lodash-41719",
       "name": "Lodash",
-      "current_version": "4.17.19",
+      "current_version": "4.16.1",
       "source": "github",
       "repo": "lodash/lodash"
     },
     {
       "id": "dompurify-230",
       "name": "DOMPurify",
-      "current_version": "2.3.0",
+      "current_version": "3.2.14",
       "source": "github",
       "repo": "cure53/DOMPurify"
     },
     {
       "id": "7-zip-2501",
       "name": "7-Zip",
-      "current_version": "25.01",
+      "current_version": "26.0",
       "source": "github",
       "repo": "ip7z/7zip",
       "download_url_template": "https://github.com/ip7z/7zip/releases/download/{version}/7z{version_nodot}-x64.exe"
@@ -104,251 +96,251 @@
     {
       "id": "allure-reports-236",
       "name": "Allure reports",
-      "current_version": "2.36",
+      "current_version": "2.44.0",
       "source": "github",
       "repo": "allure-framework/allure2"
     },
     {
       "id": "amazon-corretto-11027",
       "name": "Amazon Corretto",
-      "current_version": "11.0.27",
+      "current_version": "11.0.30.10.1",
       "source": "official",
       "official_key": "corretto11"
     },
     {
       "id": "angular-js-18",
       "name": "Angular JS",
-      "current_version": "1.8",
+      "current_version": "1.6.3",
       "source": "github",
       "repo": "angular/angular.js"
     },
     {
       "id": "ansible-2166",
       "name": "Ansible",
-      "current_version": "2.16.6",
+      "current_version": "2.19.3",
       "source": "pypi",
       "package": "ansible-core"
     },
     {
       "id": "apache-http-server-2463",
       "name": "Apache HTTP Server",
-      "current_version": "2.4.63",
+      "current_version": "2.2.68",
       "source": "official",
       "official_key": "httpd"
     },
     {
       "id": "apache-jmeter-563",
       "name": "Apache JMeter",
-      "current_version": "5.0.0",
+      "current_version": "5.4.3",
       "source": "official",
       "official_key": "jmeter"
     },
     {
       "id": "apache-maven-394",
       "name": "Apache Maven",
-      "current_version": "3.9.4",
+      "current_version": "3.7.16",
       "source": "official",
       "official_key": "maven"
     },
     {
       "id": "appium-330",
       "name": "Appium",
-      "current_version": "3.3.0",
+      "current_version": "3.5.0",
       "source": "npm",
       "package": "appium"
     },
     {
       "id": "apscheduler-391",
       "name": "APScheduler",
-      "current_version": "3.9.1",
+      "current_version": "3.9.3",
       "source": "pypi",
       "package": "APScheduler"
     },
     {
       "id": "aws-cli-23429",
       "name": "AWS CLI",
-      "current_version": "2.34.29",
+      "current_version": "2.34.36",
       "source": "github",
       "repo": "aws/aws-cli"
     },
     {
       "id": "aws-cloudformation-cli-0239",
       "name": "AWS CloudFormation CLI",
-      "current_version": "0.1.0",
+      "current_version": "0.0.39",
       "source": "pypi",
       "package": "cloudformation-cli"
     },
     {
       "id": "bash-53x",
       "name": "Bash",
-      "current_version": "5.0.0",
+      "current_version": "5.1",
       "source": "official",
       "official_key": "bash"
     },
     {
       "id": "beautifulsoup-python-library-4100",
       "name": "beautifulsoup (Python library)",
-      "current_version": "4.10.0",
+      "current_version": "4.13.0",
       "source": "pypi",
       "package": "beautifulsoup4"
     },
     {
       "id": "bootstrap-538",
       "name": "Bootstrap",
-      "current_version": "5.0.0",
+      "current_version": "5.1.8",
       "source": "github",
       "repo": "twbs/bootstrap"
     },
     {
       "id": "bytecode-viewer-2132",
       "name": "Bytecode Viewer",
-      "current_version": "2.0.0",
+      "current_version": "2.11.2",
       "source": "github",
       "repo": "Konloch/bytecode-viewer"
     },
     {
       "id": "cca-12",
       "name": "CCA",
-      "current_version": "1.2",
+      "current_version": "3.3.5",
       "source": "github",
       "repo": "ThePacielloGroup/CCAe"
     },
     {
       "id": "certifi-python-library-2020620",
       "name": "certifi (python library)",
-      "current_version": "2020.6.20",
+      "current_version": "2026.5.22",
       "source": "pypi",
       "package": "certifi"
     },
     {
       "id": "cfn-lint-1xlatestsupported",
       "name": "cfn-lint",
-      "current_version": "1.0.0",
+      "current_version": "1.54.0",
       "source": "pypi",
       "package": "cfn-lint"
     },
     {
       "id": "chardet-python-library-304",
       "name": "chardet (python library)",
-      "current_version": "3.0.4",
+      "current_version": "7.4.0",
       "source": "pypi",
       "package": "chardet"
     },
     {
       "id": "cloud-sql-auth-proxy-212",
       "name": "Cloud SQL Auth proxy",
-      "current_version": "2.1.2",
+      "current_version": "2.23.4",
       "source": "official",
       "official_key": "cloud-sql-proxy"
     },
     {
       "id": "color-contrast-analyzer-cca2-for-liferay-355",
       "name": "Color Contrast Analyzer (CCA2) for Liferay",
-      "current_version": "3.0.0",
+      "current_version": "3.3.5",
       "source": "github",
       "repo": "ThePacielloGroup/CCAe"
     },
     {
       "id": "datatables-237",
       "name": "DataTables",
-      "current_version": "2.3.7",
+      "current_version": "3.0.1",
       "source": "datatables"
     },
     {
       "id": "db-browser-for-sqlite-313x",
       "name": "DB Browser for SQLite",
-      "current_version": "3.13.0",
+      "current_version": "3.11.1",
       "source": "github",
       "repo": "sqlitebrowser/sqlitebrowser"
     },
     {
       "id": "dbeaver-2425",
       "name": "DBeaver",
-      "current_version": "24.2.5",
+      "current_version": "26.0.0",
       "source": "github",
       "repo": "dbeaver/dbeaver"
     },
     {
       "id": "django-413",
       "name": "Django",
-      "current_version": "4.1.3",
+      "current_version": "5.0",
       "source": "pypi",
       "package": "Django"
     },
     {
       "id": "django-rest-framework-3140",
       "name": "Django REST framework",
-      "current_version": "3.14.0",
+      "current_version": "3.16.0",
       "source": "pypi",
       "package": "djangorestframework"
     },
     {
       "id": "docker-2731",
       "name": "Docker",
-      "current_version": "27.3.1",
+      "current_version": "29.5.2",
       "source": "github",
       "repo": "moby/moby"
     },
     {
       "id": "elasticsearch-862",
       "name": "Elasticsearch",
-      "current_version": "8.6.2",
+      "current_version": "9.3.2",
       "source": "github",
       "repo": "elastic/elasticsearch"
     },
     {
       "id": "erlang-27346",
       "name": "Erlang",
-      "current_version": "27.3.4.6",
+      "current_version": "29.0.4",
       "source": "github",
       "repo": "erlang/otp"
     },
     {
       "id": "extent-report-512",
       "name": "Extent Report",
-      "current_version": "5.0.0",
+      "current_version": "5.0.1",
       "source": "maven",
       "maven_path": "com/aventstack/extentreports"
     },
     {
       "id": "formulas-python-library-1210",
       "name": "formulas (Python library)",
-      "current_version": "1.2.10",
+      "current_version": "1.1.4",
       "source": "pypi",
       "package": "formulas"
     },
     {
       "id": "gcloud-cli-42300",
       "name": "gcloud CLI",
-      "current_version": "423.0.0",
+      "current_version": "581.0.0",
       "source": "official",
       "official_key": "gcloud"
     },
     {
       "id": "geany-1380",
       "name": "Geany",
-      "current_version": "1.38.0",
+      "current_version": "1.0.0",
       "source": "github",
       "repo": "geany/geany"
     },
     {
       "id": "glowroot-0144",
       "name": "Glowroot",
-      "current_version": "0.14.4",
+      "current_version": "0.12.7",
       "source": "github",
       "repo": "glowroot/glowroot"
     },
     {
       "id": "google-cli-linux-and-windows-49400",
       "name": "Google CLI Linux and Windows",
-      "current_version": "494.0.0",
-      "source": "manual",
-      "download_url": "https://cloud.google.com/sdk/docs/install"
+      "current_version": "492.0.0",
+      "source": "official",
+      "official_key": "gcloud"
     },
     {
       "id": "gradle-90x",
       "name": "Gradle",
-      "current_version": "9.0.0",
+      "current_version": "9.5.1",
       "source": "github",
       "repo": "gradle/gradle",
       "download_url_template": "https://services.gradle.org/distributions/gradle-{version}-bin.zip"
@@ -356,14 +348,14 @@
     {
       "id": "grafana-12x",
       "name": "Grafana",
-      "current_version": "12.0",
+      "current_version": "13.0.0",
       "source": "github",
       "repo": "grafana/grafana"
     },
     {
       "id": "helm-3170",
       "name": "HELM",
-      "current_version": "3.17.0",
+      "current_version": "4.0.4",
       "source": "github",
       "repo": "helm/helm",
       "download_url_template": "https://get.helm.sh/helm-v{version}-windows-amd64.zip"
@@ -371,14 +363,14 @@
     {
       "id": "hibernate-61",
       "name": "Hibernate",
-      "current_version": "6.1",
+      "current_version": "7.2.7",
       "source": "github",
       "repo": "hibernate/hibernate-orm"
     },
     {
       "id": "iap-desktop-2451717",
       "name": "IAP Desktop",
-      "current_version": "2.45.1717",
+      "current_version": "2.48.1825",
       "source": "github",
       "repo": "GoogleCloudPlatform/iap-desktop"
     },
@@ -392,77 +384,77 @@
     {
       "id": "jenkins-2459",
       "name": "Jenkins",
-      "current_version": "2.459",
+      "current_version": "2.577",
       "source": "official",
       "official_key": "jenkins"
     },
     {
       "id": "jq-181",
       "name": "JQ",
-      "current_version": "1.8.1",
+      "current_version": "1.6.2",
       "source": "github",
       "repo": "jqlang/jq"
     },
     {
       "id": "jupyter-notebook-744",
       "name": "Jupyter Notebook",
-      "current_version": "7.4.4",
+      "current_version": "7.4.2",
       "source": "pypi",
       "package": "notebook"
     },
     {
       "id": "jython-274",
       "name": "Jython",
-      "current_version": "2.7.0",
+      "current_version": "2.5.5",
       "source": "github",
       "repo": "jython/jython"
     },
     {
       "id": "kibana-862",
       "name": "Kibana",
-      "current_version": "8.6.2",
+      "current_version": "9.3.2",
       "source": "github",
       "repo": "elastic/kibana"
     },
     {
       "id": "matplotlib-353",
       "name": "matplotlib",
-      "current_version": "3.5.3",
+      "current_version": "3.9.1",
       "source": "pypi",
       "package": "matplotlib"
     },
     {
       "id": "metricbeat-862",
       "name": "Metricbeat",
-      "current_version": "8.6.2",
+      "current_version": "9.2.6",
       "source": "github",
       "repo": "elastic/beats"
     },
     {
       "id": "metro-bundler-0831",
       "name": "Metro Bundler",
-      "current_version": "0.83.1",
-      "source": "npm",
-      "package": "metro"
+      "current_version": "0.85.0",
+      "source": "github",
+      "repo": "facebook/metro"
     },
     {
       "id": "miniforge-325310",
       "name": "Miniforge",
-      "current_version": "25.3.1",
+      "current_version": "26.3.3",
       "source": "github",
       "repo": "conda-forge/miniforge"
     },
     {
       "id": "mozilla-firefox-15104",
       "name": "Mozilla Firefox",
-      "current_version": "151.0.4",
+      "current_version": "153.0",
       "source": "official",
       "official_key": "firefox"
     },
     {
       "id": "nginx-130x",
       "name": "nginx",
-      "current_version": "1.30.0",
+      "current_version": "1.29.4",
       "source": "github",
       "repo": "nginx/nginx"
     },
@@ -470,163 +462,163 @@
       "id": "nodejs",
       "name": "Node.js",
       "current_version": [
-        "18.0.0",
-        "22.0.0",
-        "24.0.0"
+        "16.0.0",
+        "22.21.2",
+        "24.18.0"
       ],
       "source": "nodejs"
     },
     {
       "id": "notepad-88x",
       "name": "Notepad++",
-      "current_version": "8.8.0",
+      "current_version": "8.7.8",
       "source": "github",
       "repo": "notepad-plus-plus/notepad-plus-plus"
     },
     {
       "id": "nuget-latest",
       "name": "NuGet",
-      "current_version": "6.8.0",
+      "current_version": "latest",
       "source": "official",
       "official_key": "nuget"
     },
     {
       "id": "nunit-3133",
       "name": "NUnit",
-      "current_version": "3.13.3",
+      "current_version": "4.4.1",
       "source": "github",
       "repo": "nunit/nunit"
     },
     {
       "id": "openpyxl-315",
       "name": "OpenPyXL",
-      "current_version": "3.0.0",
+      "current_version": "3.0.4",
       "source": "pypi",
       "package": "openpyxl"
     },
     {
       "id": "openrefine-387",
       "name": "OpenRefine",
-      "current_version": "3.8.7",
+      "current_version": "3.8.1",
       "source": "github",
       "repo": "OpenRefine/OpenRefine"
     },
     {
       "id": "openssh-97",
       "name": "OpenSSH",
-      "current_version": "9.7",
+      "current_version": "9.7p2",
       "source": "official",
       "official_key": "openssh"
     },
     {
       "id": "openssl-35x",
       "name": "OpenSSL",
-      "current_version": "3.5.0",
+      "current_version": "4.0.0",
       "source": "github",
       "repo": "openssl/openssl"
     },
     {
       "id": "opentelemetry-202603",
       "name": "OpenTelemetry",
-      "current_version": "0.1.0",
+      "current_version": "0.157.0",
       "source": "github",
       "repo": "open-telemetry/opentelemetry-collector-releases"
     },
     {
       "id": "pandas-231",
       "name": "Pandas",
-      "current_version": "2.3.1",
+      "current_version": "3.0.3",
       "source": "pypi",
       "package": "pandas"
     },
     {
       "id": "pinginfoview-222",
       "name": "PingInfoView",
-      "current_version": "2.22",
+      "current_version": "2.20",
       "source": "official",
       "official_key": "pinginfoview"
     },
     {
       "id": "pip-223",
       "name": "Pip",
-      "current_version": "22.3",
+      "current_version": "26.0.1",
       "source": "pypi",
       "package": "pip"
     },
     {
       "id": "playwright-jar-dependencies-1620",
       "name": "Playwright (JAR dependencies)",
-      "current_version": "1.50.0",
+      "current_version": "1.60.0",
       "source": "maven",
       "maven_path": "com/microsoft/playwright/playwright"
     },
     {
       "id": "podman-desktop-120x",
       "name": "Podman Desktop",
-      "current_version": "1.20.0",
+      "current_version": "1.27.1",
       "source": "github",
       "repo": "podman-desktop/podman-desktop"
     },
     {
       "id": "postman-1244",
       "name": "Postman",
-      "current_version": "12.4.4",
+      "current_version": "12.2.4",
       "source": "official",
       "official_key": "postman"
     },
     {
       "id": "putty-084",
       "name": "PuTTY",
-      "current_version": "0.84",
+      "current_version": "0.82",
       "source": "official",
       "official_key": "putty"
     },
     {
       "id": "python-314x",
       "name": "Python",
-      "current_version": "3.14.0",
+      "current_version": "3.12.7",
       "source": "official",
       "official_key": "python"
     },
     {
       "id": "python-ml-auto-library-3715113",
       "name": "Python ML Auto (library)",
-      "current_version": "0.1.0",
+      "current_version": "0.13.0",
       "source": "pypi",
       "package": "auto-sklearn"
     },
     {
       "id": "rabbitmq-421",
       "name": "RabbitMQ",
-      "current_version": "4.2.1",
+      "current_version": "4.1.5",
       "source": "github",
       "repo": "rabbitmq/rabbitmq-server"
     },
     {
       "id": "react-native-0841",
       "name": "React Native",
-      "current_version": "0.84.1",
-      "source": "npm",
-      "package": "react-native"
+      "current_version": "0.85.1",
+      "source": "github",
+      "repo": "facebook/react-native"
     },
     {
       "id": "redis-8x",
       "name": "Redis",
-      "current_version": "8.0",
+      "current_version": "8.8.1",
       "source": "github",
       "repo": "redis/redis"
     },
     {
       "id": "rstudio-421",
       "name": "RStudio",
-      "current_version": "4.2.1",
+      "current_version": "2026.6.2-200",
       "source": "official",
       "official_key": "rstudio"
     },
     {
       "id": "rust-language-1880",
       "name": "RUST language",
-      "current_version": "1.88.0",
+      "current_version": "1.96.0",
       "source": "github",
       "repo": "rust-lang/rust",
       "download_url_template": "https://static.rust-lang.org/dist/rust-{version}-x86_64-pc-windows-msvc.msi"
@@ -634,70 +626,70 @@
     {
       "id": "schedule-python-library-060",
       "name": "schedule (Python Library)",
-      "current_version": "0.6.0",
+      "current_version": "1.0.2",
       "source": "pypi",
       "package": "schedule"
     },
     {
       "id": "selenium-4350",
       "name": "Selenium",
-      "current_version": "4.35.0",
+      "current_version": "4.46.0",
       "source": "pypi",
       "package": "selenium"
     },
     {
       "id": "sikulix-api-jar-dependencies-205",
       "name": "SikuliX API (JAR dependencies)",
-      "current_version": "2.0.0",
+      "current_version": "2.0.3",
       "source": "github",
       "repo": "RaiMan/SikuliX1"
     },
     {
       "id": "simplecaptcha-121",
       "name": "simplecaptcha",
-      "current_version": "1.2.1",
+      "current_version": "1.0.2",
       "source": "maven",
       "maven_path": "cn/apiclub/tool/simplecaptcha"
     },
     {
       "id": "soap-ui-570",
       "name": "SOAP UI",
-      "current_version": "5.7.0",
+      "current_version": "5.8.0",
       "source": "github",
       "repo": "SmartBear/soapui"
     },
     {
       "id": "sonarqube-20251",
       "name": "SonarQube",
-      "current_version": "9.0.0",
+      "current_version": "26.6.0.126808",
       "source": "github",
       "repo": "SonarSource/sonarqube"
     },
     {
       "id": "soupsieve-python-library-21",
       "name": "soupsieve (Python Library)",
-      "current_version": "2.1",
+      "current_version": "2.7.2",
       "source": "pypi",
       "package": "soupsieve"
     },
     {
       "id": "spring-tool-suite-530",
       "name": "Spring Tool Suite",
-      "current_version": "5.0.0",
+      "current_version": "3.0.0",
       "source": "github",
       "repo": "spring-projects/sts4"
     },
     {
       "id": "sqlite-browser-3122",
       "name": "SQLite Browser",
-      "current_version": "3.12.2",
+      "current_version": "3.11.1",
       "source": "github",
       "repo": "sqlitebrowser/sqlitebrowser"
     },
     {
       "id": "terraform-for-linux-196",
       "name": "Terraform For Linux",
-      "current_version": "1.9.6",
+      "current_version": "1.7.6",
       "source": "github",
       "repo": "hashicorp/terraform",
       "download_url_template": "https://releases.hashicorp.com/terraform/{version}/terraform_{version}_windows_amd64.zip"
@@ -705,317 +697,345 @@
     {
       "id": "testng-7110",
       "name": "TestNG",
-      "current_version": "7.11.0",
+      "current_version": "7.9.0",
       "source": "maven",
       "maven_path": "org/testng/testng"
     },
     {
       "id": "trivy-0740",
       "name": "Trivy",
-      "current_version": "0.70.0",
+      "current_version": "0.72.0",
       "source": "github",
       "repo": "aquasecurity/trivy"
     },
     {
       "id": "typescript-572",
       "name": "TypeScript",
-      "current_version": "5.7.2",
-      "source": "npm",
-      "package": "typescript"
+      "current_version": "7.0.0",
+      "source": "github",
+      "repo": "microsoft/TypeScript"
     },
     {
       "id": "tzlocal-21",
       "name": "tzlocal",
-      "current_version": "2.1",
+      "current_version": "5.2.4",
       "source": "pypi",
       "package": "tzlocal"
     },
     {
       "id": "urllib3-python-library-1269",
       "name": "urllib3 (python library)",
-      "current_version": "1.26.9",
+      "current_version": "2.5.0",
       "source": "pypi",
       "package": "urllib3"
     },
     {
       "id": "vlc-media-player-213",
       "name": "VLC Media Player",
-      "current_version": "2.1.3",
+      "current_version": "3.0.21",
       "source": "official",
       "official_key": "vlc"
     },
     {
       "id": "websphere-liberty-25006",
       "name": "WebSphere Liberty",
-      "current_version": "25.0.0.6",
+      "current_version": "24.0.0.8",
       "source": "github",
       "repo": "OpenLiberty/open-liberty"
     },
     {
       "id": "wget-125",
       "name": "Wget",
-      "current_version": "1.20.0",
+      "current_version": "1.23",
       "source": "official",
       "official_key": "wget"
     },
     {
       "id": "wildfly-2801",
       "name": "WildFly",
-      "current_version": "28.0.1",
+      "current_version": "40.0.0",
       "source": "github",
       "repo": "wildfly/wildfly"
     },
     {
       "id": "windows-subsystem-for-linux-wsl-2",
       "name": "Windows Subsystem for Linux (WSL)",
-      "current_version": "2.0.0",
+      "current_version": "0.0.0",
       "source": "github",
       "repo": "microsoft/WSL"
     },
     {
       "id": "winscp-521andabove",
       "name": "WinSCP",
-      "current_version": "5.21",
+      "current_version": "5.19",
       "source": "official",
       "official_key": "winscp"
     },
     {
       "id": "wireshark-44x",
       "name": "Wireshark",
-      "current_version": "4.4.0",
+      "current_version": "4.2.0",
       "source": "official",
       "official_key": "wireshark"
     },
     {
       "id": "xlsxwriter-325",
       "name": "Xlsxwriter",
-      "current_version": "3.2.5",
+      "current_version": "3.0.5",
       "source": "pypi",
       "package": "XlsxWriter"
     },
     {
       "id": "xunit-net-foundation-322",
       "name": "Xunit (.NET Foundation)",
-      "current_version": "3.2.2",
+      "current_version": "2.0.0",
       "source": "github",
       "repo": "xunit/xunit"
     },
     {
       "id": "zoom-workplace-basic-5963701",
       "name": "Zoom Workplace Basic",
-      "current_version": "5.9.6.3701",
+      "current_version": "5.7.6.3701",
       "source": "official",
       "official_key": "zoom"
     },
     {
       "id": "android-studio-jellyfish-202331",
       "name": "Android Studio Jellyfish",
-      "current_version": "2023.3.1",
+      "current_version": "2023.1.1",
       "source": "official",
       "official_key": "android-studio"
     },
     {
       "id": "autoit-33142",
       "name": "AutoIT",
-      "current_version": "3.3.14.2",
+      "current_version": "3.1.14.2",
       "source": "official",
       "official_key": "autoit"
     },
     {
       "id": "aws-migration-evaluator-tsocollector-15023",
       "name": "AWS Migration evaluator tool (TSOCollector)",
-      "current_version": "1.50.23",
+      "current_version": "1.48.23",
       "source": "manual",
       "download_url": "https://aws.amazon.com/migration-evaluator/"
     },
     {
       "id": "beetl-sql-306",
       "name": "Beetl-sql",
-      "current_version": "3.0.6",
+      "current_version": "3.38.1-RELEASE",
       "source": "maven",
       "maven_path": "com/ibeetl/beetlsql"
     },
     {
       "id": "cisco-packet-tracer-822",
       "name": "Cisco Packet Tracer",
-      "current_version": "8.2.2",
+      "current_version": "8.0.2",
       "source": "manual",
       "download_url": "https://www.netacad.com/courses/packet-tracer"
     },
     {
       "id": "dotnetstack-ms-80403",
       "name": "DotNetStack (MS)",
-      "current_version": "8.0.403",
+      "current_version": "8.0.401",
       "source": "official",
       "official_key": "dotnet8"
     },
     {
       "id": "dynatrace-chromium-113",
       "name": "Dynatrace Chromium",
-      "current_version": "113",
+      "current_version": "111",
       "source": "manual",
       "download_url": "https://www.dynatrace.com/support/download/"
     },
     {
       "id": "echo-mirage-31",
       "name": "Echo Mirage",
-      "current_version": "3.1",
+      "current_version": "2.0",
       "source": "manual",
       "download_url": "https://sourceforge.net/projects/echomirage.oldbutgold.p/files/"
     },
     {
       "id": "eclipse-4418",
       "name": "Eclipse",
-      "current_version": "4.4.18",
+      "current_version": "4.2.18",
       "source": "official",
       "official_key": "eclipse"
     },
     {
       "id": "epel-package-8",
       "name": "EPEL Package",
-      "current_version": "8",
+      "current_version": "6",
       "source": "manual",
       "download_url": "https://docs.fedoraproject.org/en-US/epel/"
     },
     {
       "id": "es-docker-image-8176",
       "name": "ES Docker Image",
-      "current_version": "8.17.6",
+      "current_version": "8.15.6",
       "source": "manual",
       "download_url": "https://www.docker.elastic.co/r/elasticsearch"
     },
     {
       "id": "fiddler-5020211",
       "name": "Fiddler",
-      "current_version": "5.0.20211",
+      "current_version": "5.0.20209",
       "source": "manual",
       "download_url": "https://www.telerik.com/download/fiddler"
     },
     {
       "id": "golang-1230",
       "name": "Golang",
-      "current_version": "1.23.0",
+      "current_version": "1.21.0",
       "source": "official",
       "official_key": "golang"
     },
     {
       "id": "kali-linux-os-iso",
       "name": "Kali Linux OS - ISO scan only",
-      "current_version": "2025.3",
+      "current_version": "2025.1",
       "source": "manual",
       "download_url": "https://www.kali.org/get-kali/"
     },
     {
       "id": "liferay-docker-image-2025q12",
       "name": "Liferay Docker Image",
-      "current_version": "2025.Q1.2",
+      "current_version": "2024.Q1.1",
       "source": "manual",
       "download_url": "https://hub.docker.com/r/liferay/portal"
     },
     {
       "id": "liferay-workspace-dev-studio-3102",
       "name": "Liferay Workspace with Dev Studio",
-      "current_version": "3.10.2",
+      "current_version": "3.8.2",
       "source": "manual",
       "download_url": "https://www.liferay.com/downloads-community"
     },
     {
       "id": "metasploit-662",
       "name": "Metasploit",
-      "current_version": "6.6.2",
+      "current_version": "4.9.7",
       "source": "github",
       "repo": "rapid7/metasploit-framework"
     },
     {
       "id": "nuitka-2123",
       "name": "Nuitka",
-      "current_version": "2.1.23",
+      "current_version": "2.0.22",
       "source": "pypi",
       "package": "Nuitka"
     },
     {
       "id": "pdf-scanner-412",
       "name": "PDF Scanner",
-      "current_version": "4.1.2",
+      "current_version": "4.0.1",
       "source": "manual",
       "download_url": "https://www.pdf-xchange.com/product/downloads"
     },
     {
       "id": "pdf-xchange-13",
       "name": "PDF-XChange",
-      "current_version": "13",
+      "current_version": "11",
       "source": "manual",
       "download_url": "https://www.pdf-xchange.com/product/pdf-xchange-editor"
     },
     {
       "id": "postgresql-15x",
       "name": "PostgreSQL",
-      "current_version": "15.0",
+      "current_version": "13.0",
       "source": "official",
       "official_key": "postgresql"
     },
     {
       "id": "python-requests-library-2310",
       "name": "Python requests library",
-      "current_version": "2.31.0",
+      "current_version": "2.29.0",
       "source": "pypi",
       "package": "requests"
     },
     {
       "id": "robocode-195",
       "name": "Robocode",
-      "current_version": "1.9.5",
+      "current_version": "1.7.5",
       "source": "github",
-      "repo": "robocode/robocode"
+      "repo": "robo-code/robocode"
     },
     {
       "id": "tightvnc-2881",
       "name": "TightVNC",
-      "current_version": "2.8.81",
+      "current_version": "2.6.81.0",
       "source": "official",
       "official_key": "tightvnc"
     },
     {
       "id": "ubuntu-2404",
       "name": "Ubuntu",
-      "current_version": "24.04",
+      "current_version": "24.2",
       "source": "manual",
       "download_url": "https://ubuntu.com/download/desktop"
     },
     {
       "id": "dotnet-core-8026",
       "name": ".NET Core",
-      "current_version": "8.0.26",
+      "current_version": "8.0.24",
       "source": "official",
       "official_key": "dotnet8-runtime"
     },
     {
       "id": "dotnet-framework-461",
       "name": ".NET Framework",
-      "current_version": "4.6.1",
+      "current_version": "4.4.1",
       "source": "manual",
       "download_url": "https://dotnet.microsoft.com/en-us/download/dotnet-framework"
     },
     {
-      "id": "java-runtime-environment-jre-21067",
-      "name": "Java Runtime Environment (JRE)",
-      "current_version": "21.0.6+7",
-      "source": "manual",
-      "download_url": "https://adoptium.net/temurin/releases/"
+      "id": "pdf-creator-412",
+      "name": "PDF Creator",
+      "current_version": "4.0.1",
+      "source": "official",
+      "official_key": "pdfcreator"
     },
     {
-      "id": "jdk-java-development-kit-23",
-      "name": "JDK (Java Development kit)",
-      "current_version": "25",
+      "id": "pdffill-10",
+      "name": "PDFFill",
+      "current_version": "8",
       "source": "manual",
-      "download_url": "https://adoptium.net/temurin/releases/"
+      "download_url": "https://www.pdfill.com/download.html"
     },
     {
-      "id": "openjdk-21lts",
-      "name": "OpenJDK",
-      "current_version": "21",
+      "id": "syft-115x",
+      "name": "Syft",
+      "current_version": "1.49.1",
+      "source": "github",
+      "repo": "anchore/syft"
+    },
+    {
+      "id": "eclipse-marketplace-1110",
+      "name": "Eclipse MarketPlace",
+      "current_version": "1.9.0",
       "source": "manual",
-      "download_url": "https://adoptium.net/temurin/releases/?version=21"
+      "download_url": "https://marketplace.eclipse.org/"
+    },
+    {
+      "id": "testng-eclipse-7110",
+      "name": "TestNG for Eclipse",
+      "current_version": "7.9.0",
+      "source": "manual",
+      "download_url": "https://testng.org/testng-eclipse-update-site/7.11.0"
+    },
+    {
+      "id": "cucumber-eclipse-3",
+      "name": "Cucumber Eclipse Plugin",
+      "current_version": "1",
+      "source": "manual",
+      "download_url": "https://cucumber.github.io/cucumber-eclipse/update-site/main/"
+    },
+    {
+      "id": "maven-profiles-management-155",
+      "name": "Maven profiles Management",
+      "current_version": "1.3.5",
+      "source": "manual",
+      "download_url": "https://download.jboss.org/jbosstools/updates/stable/kepler/"
     }
   ]
 }
